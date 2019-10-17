@@ -1,6 +1,6 @@
-package com.fengwenyi.study_java;
+package com.fengwenyi.study_java.chapter1;
 
-import com.fengwenyi.study_java.bean.UserBean;
+import com.fengwenyi.study_java.chapter1.bean.UserBean;
 
 import java.util.Optional;
 

@@ -1,4 +1,4 @@
-package com.fengwenyi.study_java.bean;
+package com.fengwenyi.study_java.chapter1.bean;
 
 import lombok.Data;
 
