@@ -2,23 +2,18 @@
 
 学习Java
 
-## chapter1
+-[x] [chapter1 | 学习 Optional](./src/main/java/com/fengwenyi/study_java/chapter1)
 
-[学习 Optional]()
+-[x] [chapter2 | 子类继承父类执行顺序](./src/main/java/com/fengwenyi/study_java/chapter2)
 
-## chapter2
+-[ ] [chapter3 | 计算有效期](./src/main/java/com/fengwenyi/study_java/chapter3)
 
-[子类继承父类执行顺序]()
+-[x] [chapter4 | BigDecimal相关的计算问题](./src/main/java/com/fengwenyi/study_java/chapter4/StudyBigDecimal.java)
 
-## chapter3
+-[ ] [chapter5 | java 8 stream](./src/main/java/com/fengwenyi/study_java/chapter5)
 
-[计算有效期]()
 
-## chapter4
+## 专题
 
-[BigDecimal相关的计算问题](./src/main/java/com/fengwenyi/study_java/chapter4/StudyBigDecimal.java)
-
-加减乘除
-
-比较大小
+。。。
 
