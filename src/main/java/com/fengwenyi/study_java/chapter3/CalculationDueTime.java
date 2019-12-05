@@ -1,7 +1,10 @@
 package com.fengwenyi.study_java.chapter3;
 
+import sun.tools.jconsole.Plotter;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 /**
  * 计算到期时间
@@ -17,41 +20,49 @@ public class CalculationDueTime {
 
         LocalDate now = LocalDate.now();
 
-        int effectiveYear = 3;
-        int effectiveMonth = 3;
-        int effectiveDay = 1;
+        LocalDateTime localDateTime = LocalDateTime.now();
 
-        LocalDate dueDateByYear = getDueDateByYear(now, effectiveYear);
-        System.out.println("现在是：" + now +", 有效时间 " + effectiveYear + " 年，到期时间为：" + dueDateByYear);
+        // 加
+        //localDateTime.plus(, ChronoUnit.);
 
-        LocalDate dueDateByMonth = getDueDateByMonth(now, effectiveMonth);
-        System.out.println("现在是：" + now +", 有效时间 " + effectiveMonth + " 个月，到期时间为：" + dueDateByMonth);
+        long effective = 0;
 
-        LocalDate dueDateByDay = getDueDateByDay(now, effectiveDay);
-        System.out.println("现在是：" + now +", 有效时间 " + effectiveDay + " 天，到期时间为：" + dueDateByDay);
+        // 多少年以后
+        localDateTime.plusYears(effective);
 
-        LocalDateTime nowDateTime = LocalDateTime.now();
+        // 多少月以后
+        localDateTime.plusMonths(effective);
+        // 多少周以后
+        localDateTime.plusWeeks(effective);
+        // 多少天以后
+        localDateTime.plusDays(effective);
+        // 多少小时以后
+        localDateTime.plusHours(effective);
+        // 多少分钟以后
+        localDateTime.plusMinutes(effective);
+        // 多少秒以后
+        localDateTime.plusSeconds(effective);
 
-        LocalDateTime dueDateTimeByDay = getDueDateTimeByDay(nowDateTime, effectiveDay);
-        System.out.println("现在是：" + nowDateTime +", 有效时间 " + effectiveDay + " 天，到期时间为：" + dueDateTimeByDay);
+        // 减
+        // 多少年以前
+        localDateTime.minusYears(effective);
+        // 多少月以前
+        localDateTime.minusMonths(effective);
+        // 多少周以前
+        localDateTime.minusWeeks(effective);
+        // 多少天以前
+        localDateTime.minusDays(effective);
+        // 多少小时以前
+        localDateTime.minusHours(effective);
+        // 多少分钟以前
+        localDateTime.minusMinutes(effective);
+        // 多少秒以前
+        localDateTime.minusSeconds(effective);
+
+        // 算当前就-1
+
     }
 
-    // 获取到期日期
-    private static LocalDate getDueDateByYear(LocalDate startDate, int effectiveYear) {
-         return startDate.plusYears(effectiveYear).minusDays(1);
-    }
 
-    // 获取到期日期
-    private static LocalDate getDueDateByMonth(LocalDate startDate, int effectiveMonth) {
-        return startDate.plusMonths(effectiveMonth).minusDays(1);
-    }
-
-    private static LocalDate getDueDateByDay(LocalDate startDate, int effectiveDay) {
-        return startDate.plusDays(effectiveDay);
-    }
-
-    private static LocalDateTime getDueDateTimeByDay(LocalDateTime startDateTime, int effectiveDay) {
-        return startDateTime.plusDays(effectiveDay);
-    }
 
 }
