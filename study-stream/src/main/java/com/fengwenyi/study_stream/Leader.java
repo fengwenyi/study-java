@@ -1,26 +1,13 @@
 package com.fengwenyi.study_stream;
 
-import java.util.Objects;
-
 /**
  * @author Erwin Feng
- * @since 2020/4/27 2:10
+ * @since 2020/5/13
  */
-public class Employee {
-
-    private Integer id;
+public class Leader {
 
     private String name;
-
     private Double salary;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -38,21 +25,15 @@ public class Employee {
         this.salary = salary;
     }
 
-    public Employee(Integer id, String name, Double salary) {
-        this.id = id;
-        this.name = name;
-        this.salary = salary;
-    }
-
-    public Employee() {
+    public Leader() {
     }
 
     @Override
     public String toString() {
-        return "Employee{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
+        return "Leader{" +
+                "name='" + name + '\'' +
                 ", salary=" + salary +
                 '}';
     }
+
 }

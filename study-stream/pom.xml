@@ -11,6 +11,14 @@
 
     <artifactId>study-stream</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>one.util</groupId>
+            <artifactId>streamex</artifactId>
+            <version>0.7.2</version>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>
