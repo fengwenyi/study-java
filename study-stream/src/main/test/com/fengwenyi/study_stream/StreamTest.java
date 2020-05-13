@@ -23,7 +23,7 @@ public class StreamTest extends Base {
         List<Employee> employees = list.stream().filter(employee -> employee.getSalary() == 5000)
                 .peek(System.out::println)
                 .collect(Collectors.toList());
-        Assert.assertEquals(1, employees.size());
+        Assert.assertEquals(2, employees.size());
 
         List<Employee> employees2 = list.stream().filter(employee -> employee.getSalary() == 5000 && employee.getName().equals("Jack"))
                 .peek(System.out::println)
@@ -40,14 +40,14 @@ public class StreamTest extends Base {
             leader.setSalary(employee.getSalary());
             return leader;
         }).peek(System.out::println).collect(Collectors.toList());
-        Assert.assertEquals(2, leaders.size());
+        Assert.assertEquals(3, leaders.size());
     }
 
     @Test
     public void flatMap() {
         // 需求：将多维的列表转化为单维的列表
         List<Employee> employees = multidimensionalList.stream().flatMap(Collection::stream).collect(Collectors.toList());
-        Assert.assertEquals(7, employees.size());
+        Assert.assertEquals(9, employees.size());
         // flatMap 接收的一个流
         List<Employee> employees2 = multidimensionalList.stream().flatMap(list -> list.stream()).peek(System.out::println).collect(Collectors.toList());
         Assert.assertEquals(employees, employees2);
@@ -138,6 +138,57 @@ public class StreamTest extends Base {
     private static <T>Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
         Map<Object, Boolean> result = new ConcurrentHashMap<>();
         return t -> result.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
+
+    @Test
+    public void reduce() {
+        // reduce 是裁剪，减少的意思
+
+        // 需求：计算薪酬总和
+        // 先将员工列表转换为薪酬列表
+        // 再计算薪酬总和
+        double salarySum = list.stream().map(Employee::getSalary).reduce(Double::sum).orElse(0.0);
+        double sum = list.stream().mapToDouble(Employee::getSalary).sum();
+        Assert.assertEquals(salarySum, sum, 0.0);
+
+        double salarySum2 = list.stream().map(Employee::getSalary).reduce((a, b) -> {
+            System.out.println("a=" + a + ", b=" + b);
+            return a + b;
+        }).orElse(0.0);
+        Assert.assertEquals(salarySum2, sum, 0.0);
+
+        double salarySum3 = list.stream().map(Employee::getSalary).reduce(AddUtils::add).orElse(0.0);
+        Assert.assertEquals(salarySum3, sum, 0.0);
+
+        double salarySum4 = list.stream().map(Employee::getSalary).reduce(0.00, Double::sum);
+        Assert.assertEquals(salarySum4, sum, 0.0);
+
+        double salarySum5 = list.stream().map(Employee::getSalary).reduce(1.00, Double::sum);
+        Assert.assertEquals(salarySum5, sum + 1, 0.0);
+    }
+
+    static class AddUtils {
+        public static Double add(Double a, Double b) {
+            return a + b;
+        }
+    }
+
+    @Test
+    public void collector() {
+        String employeeNames = list.stream().map(Employee::getName).collect(Collectors.joining(", "));
+        System.out.println(employeeNames); // Jacob, Sophia, Rose, Lily, Daisy, Jane, Jasmine, Jack, Poppy
+
+        List<String> employeeNameList = list.stream().map(Employee::getName).collect(Collectors.toList());
+        System.out.println(employeeNameList);
+
+        Set<String> employeeNameSet = list.stream().map(Employee::getName).collect(Collectors.toSet());
+        System.out.println(employeeNameSet);
+
+        Vector<String> employeeNameVector = list.stream().map(Employee::getName).collect(Collectors.toCollection(Vector::new));
+        System.out.println(employeeNameVector);
+
+        Map<Integer, String> employeesMap = list.stream().collect(Collectors.toMap(Employee::getId, Employee::getName));
+        System.out.println(employeesMap);
     }
 
 }

@@ -13,6 +13,9 @@
         <module>study-java-base</module>
     </modules>
 
+    <properties>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
