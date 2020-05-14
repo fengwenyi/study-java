@@ -1,11 +1,18 @@
 package com.fengwenyi.study_stream;
 
 import one.util.streamex.StreamEx;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -16,6 +23,8 @@ import java.util.stream.Collectors;
  * @since 2020/5/13
  */
 public class StreamTest extends Base {
+
+    private static final Logger logger = LogManager.getLogger(StreamTest.class.getName());
 
     @Test
     public void filter() {
@@ -189,6 +198,110 @@ public class StreamTest extends Base {
 
         Map<Integer, String> employeesMap = list.stream().collect(Collectors.toMap(Employee::getId, Employee::getName));
         System.out.println(employeesMap);
+    }
+
+    @Test
+    public void count() {
+        // 计算流中有多少元素
+        long count = list.stream().count();
+        Assert.assertEquals(9, count);
+
+        // 需求：薪酬为5000的员工数
+        int count2 = 0;
+        for (Employee employee : list) {
+            if (employee.getSalary() == 5000) {
+                count2++;
+            }
+        }
+        System.out.println(count2);
+
+        long count3 = list.stream().filter(employee -> employee.getSalary() == 5000).count();
+        Assert.assertEquals(count3, count2);
+    }
+
+    @Test
+    public void summarizingDouble() {
+        // 统计
+        DoubleSummaryStatistics employeeSalaryStatistics = list.stream().collect(Collectors.summarizingDouble(Employee::getSalary));
+        System.out.println("employee salary statistics:" + employeeSalaryStatistics);
+        // employee salary statistics:DoubleSummaryStatistics{count=9, sum=39000.000000, min=1000.000000, average=4333.333333, max=7000.000000}
+
+        DoubleSummaryStatistics employeeSalaryStatistics2 = list.stream().mapToDouble(Employee::getSalary).summaryStatistics();
+        System.out.println("employee salary statistics2:" + employeeSalaryStatistics2);
+
+    }
+
+    @Test
+    public void partitioningBy() {
+        // 分类
+        // 需求：找出薪酬大于5000的员工
+        Map<Boolean, List<Employee>> map = list.stream().collect(Collectors.partitioningBy(employee -> employee.getSalary() > 5000));
+        System.out.println("true:" + map.get(Boolean.TRUE));
+        System.out.println("false:" + map.get(Boolean.FALSE));
+        // true:[Employee{id=7, name='Jasmine', salary=6000.0}, Employee{id=8, name='Jack', salary=6000.0}, Employee{id=9, name='Poppy', salary=7000.0}]
+    }
+
+    @Test
+    public void groupingBy() {
+        // 分组
+        // 需求：根据员工薪酬分组
+        Map<Double, List<Employee>> map = list.stream().collect(Collectors.groupingBy(Employee::getSalary));
+        System.out.println(map);
+
+        Map<Double, List<Employee>> map4 = list.stream().collect(Collectors.groupingBy(Employee::getSalary, Collectors.toList()));
+        System.out.println(map4);
+
+        // 薪酬-员工数
+        Map<Double, Long> map2 = list.stream().collect(Collectors.groupingBy(Employee::getSalary, Collectors.counting()));
+        System.out.println(map2);
+
+        // 薪酬-总和
+        Map<Double, Double> map3 = list.stream().collect(Collectors.groupingBy(Employee::getSalary, Collectors.summingDouble(Employee::getSalary)));
+        System.out.println(map3);
+    }
+
+    @Test
+    public void parallel() {
+        // 平行计算
+        list.stream().parallel().forEach(StreamTest::cal);
+        /*
+        2020-05-15 01:47:14.231 [ForkJoinPool.commonPool-worker-4] INFO  com.fengwenyi.study_stream.StreamTest - employee name: Jacob
+        2020-05-15 01:47:15.226 [ForkJoinPool.commonPool-worker-2] INFO  com.fengwenyi.study_stream.StreamTest - employee name: Sophia
+        2020-05-15 01:47:16.226 [ForkJoinPool.commonPool-worker-1] INFO  com.fengwenyi.study_stream.StreamTest - employee name: Rose
+        2020-05-15 01:47:17.226 [ForkJoinPool.commonPool-worker-3] INFO  com.fengwenyi.study_stream.StreamTest - employee name: Lily
+        2020-05-15 01:47:18.225 [main] INFO  com.fengwenyi.study_stream.StreamTest - employee name: Jane
+        2020-05-15 01:47:18.228 [ForkJoinPool.commonPool-worker-7] INFO  com.fengwenyi.study_stream.StreamTest - employee name: Daisy
+        2020-05-15 01:47:19.226 [ForkJoinPool.commonPool-worker-5] INFO  com.fengwenyi.study_stream.StreamTest - employee name: Jack
+        2020-05-15 01:47:19.228 [ForkJoinPool.commonPool-worker-6] INFO  com.fengwenyi.study_stream.StreamTest - employee name: Jasmine
+        2020-05-15 01:47:21.234 [ForkJoinPool.commonPool-worker-4] INFO  com.fengwenyi.study_stream.StreamTest - employee name: Poppy
+         */
+    }
+
+    private static void cal(Employee employee) {
+        try {
+            long sleepTime = employee.getSalary().longValue();
+            TimeUnit.MILLISECONDS.sleep(sleepTime);
+            logger.info("employee name: {}", employee.getName());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void file() throws IOException {
+        String tempFilePath = "E:\\temp\\text.txt";
+
+        /*PrintWriter printWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(tempFilePath)));
+        list.forEach(printWriter::println);
+        printWriter.close();*/
+
+        // 使用 try 自动关闭流
+        try (PrintWriter printWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(tempFilePath)))) {
+            list.forEach(printWriter::println);
+            list.forEach(employee -> printWriter.println(employee.getName()));
+        }
+
+        List<String> s = Files.lines(Paths.get(tempFilePath)).peek(System.out::println).collect(Collectors.toList());
     }
 
 }

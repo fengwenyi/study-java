@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="OFF">
+    <appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+    </appenders>
+    <loggers>
+        <!--我们只让这个logger输出trace信息，其他的都是error级别-->
+        <logger name="com.fizzbook.log4j2" level="trace" additivity="false">
+            <appender-ref ref="Console"/>
+        </logger>
+
+        <!-- root的logger，如果其他的没有配置则会默认继承该日志级别 -->
+        <root level="info">
+            <appender-ref ref="Console"/>
+        </root>
+    </loggers>
+</configuration>
