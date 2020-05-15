@@ -6,7 +6,10 @@ package com.fengwenyi.study_stream;
  */
 public class Leader {
 
+    /** 员工姓名 */
     private String name;
+
+    /** 员工薪酬 */
     private Double salary;
 
     public String getName() {

@@ -1,5 +1,6 @@
 package com.fengwenyi.study_stream;
 
+import com.google.gson.Gson;
 import one.util.streamex.StreamEx;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 通过Employee的操作例子来学习java 8 stream api
@@ -27,8 +29,20 @@ public class StreamTest extends Base {
     private static final Logger logger = LogManager.getLogger(StreamTest.class.getName());
 
     @Test
+    public void data() {
+        String jsonStr = new Gson().toJson(list);
+        System.out.println(jsonStr);
+    }
+
+    @Test
+    public void create() {
+        // Stream.generate();
+        // Stream.iterate()
+    }
+
+    @Test
     public void filter() {
-        // 需求：我们要查找薪酬为5000的员工
+        // 需求：我们要查找薪酬为5000的员工列表
         List<Employee> employees = list.stream().filter(employee -> employee.getSalary() == 5000)
                 .peek(System.out::println)
                 .collect(Collectors.toList());
@@ -67,12 +81,12 @@ public class StreamTest extends Base {
         // 需求：根据薪酬排序
 
         // 薪酬从小到大排序
-        list.stream().sorted(Comparator.comparing(Employee::getSalary)).peek(System.out::println).collect(Collectors.toList());
+        List<Employee> employees = list.stream().sorted(Comparator.comparing(Employee::getSalary)).peek(System.out::println).collect(Collectors.toList());
 
         System.out.println();
 
         // 薪酬从大到小排序
-        list.stream().sorted(Comparator.comparing(Employee::getSalary).reversed()).peek(System.out::println).collect(Collectors.toList());
+        List<Employee> employees2 = list.stream().sorted(Comparator.comparing(Employee::getSalary).reversed()).peek(System.out::println).collect(Collectors.toList());
     }
 
     @Test
@@ -106,7 +120,7 @@ public class StreamTest extends Base {
         Assert.assertTrue(isAllMatch);
 
         // anyMatch 集合中只要有一个元素满足条件就会返回true
-        // 只要有一个薪酬大于等于7000
+        // 有没有薪酬大于等于7000
         boolean isAnyMatch = list.stream().anyMatch(employee -> employee.getSalary() >= 7000);
         Assert.assertTrue(isAnyMatch);
 
@@ -119,7 +133,7 @@ public class StreamTest extends Base {
     // 去重
     @Test
     public void distinct() {
-        // 去重，根据对象的hash值去重
+        // 去重，根据 Object#equals(Object) 去重
         List<Employee> employees = list.stream().distinct().collect(Collectors.toList());
         Assert.assertEquals(9, employees.size());
 
@@ -221,7 +235,7 @@ public class StreamTest extends Base {
 
     @Test
     public void summarizingDouble() {
-        // 统计
+        // 统计分析
         DoubleSummaryStatistics employeeSalaryStatistics = list.stream().collect(Collectors.summarizingDouble(Employee::getSalary));
         System.out.println("employee salary statistics:" + employeeSalaryStatistics);
         // employee salary statistics:DoubleSummaryStatistics{count=9, sum=39000.000000, min=1000.000000, average=4333.333333, max=7000.000000}
@@ -233,7 +247,7 @@ public class StreamTest extends Base {
 
     @Test
     public void partitioningBy() {
-        // 分类
+        // 分成满足条件（true）和不满足条件（false）两个区
         // 需求：找出薪酬大于5000的员工
         Map<Boolean, List<Employee>> map = list.stream().collect(Collectors.partitioningBy(employee -> employee.getSalary() > 5000));
         System.out.println("true:" + map.get(Boolean.TRUE));
@@ -295,12 +309,12 @@ public class StreamTest extends Base {
         list.forEach(printWriter::println);
         printWriter.close();*/
 
-        // 使用 try 自动关闭流
-        try (PrintWriter printWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(tempFilePath)))) {
+        try (PrintWriter printWriter = new PrintWriter(Files.newBufferedWriter(Paths.get(tempFilePath)))) { // 使用 try 自动关闭流
             list.forEach(printWriter::println);
-            list.forEach(employee -> printWriter.println(employee.getName()));
+            list.forEach(employee -> printWriter.println(employee.getName())); // 将员工的姓名写到文件中
         }
 
+        // 从文件中读取员工的姓名
         List<String> s = Files.lines(Paths.get(tempFilePath)).peek(System.out::println).collect(Collectors.toList());
     }
 

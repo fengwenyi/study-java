@@ -1,17 +1,19 @@
 package com.fengwenyi.study_stream;
 
-import java.util.Objects;
-
 /**
+ * 员工实体类
  * @author Erwin Feng
  * @since 2020/4/27 2:10
  */
 public class Employee {
 
+    /** 员工ID */
     private Integer id;
 
+    /** 员工姓名 */
     private String name;
 
+    /** 员工薪资 */
     private Double salary;
 
     public Integer getId() {
