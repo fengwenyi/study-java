@@ -17,6 +17,7 @@
     <modules>
         <module>study-stream</module>
         <module>study-java-base</module>
+        <module>study-reactor</module>
     </modules>
 
     <dependencies>
