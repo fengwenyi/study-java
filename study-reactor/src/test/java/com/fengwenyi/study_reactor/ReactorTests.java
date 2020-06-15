@@ -1,6 +1,8 @@
 package com.fengwenyi.study_reactor;
 
 import org.junit.Test;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -63,6 +65,50 @@ public class ReactorTests {
         // 创建方式6
         Mono<Integer> integerMono = Mono.from(Flux.range(1, 5)); // 取第一个 1
         integerMono.subscribe(System.out::println); // 1
+    }
+
+    @Test
+    public void subscribe() {
+        Flux<String> stringFlux = Flux.just("Hello", "World");
+        stringFlux.subscribe(System.out::println);
+        // stringFlux.subscribe(val -> System.out.println(val));
+
+        System.out.println("------------------");
+
+        stringFlux.subscribe(val -> {
+            System.out.println(val);
+        }, error -> {
+            System.err.println(error);
+        }, () -> {
+            System.out.println("完成处理");
+        }, subscription -> {
+//            subscription.request(Long.MAX_VALUE);
+            subscription.request(1);
+        });
+
+        System.out.println("-----------------------");
+
+        stringFlux.subscribe(new Subscriber<String>() {
+            @Override
+            public void onSubscribe(Subscription subscription) {
+                subscription.request(Long.MAX_VALUE);
+            }
+
+            @Override
+            public void onNext(String s) {
+                System.out.println(s);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                System.out.println("onComplete");
+            }
+        });
     }
 
 }
